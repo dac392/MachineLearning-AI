@@ -15,6 +15,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void onStartButtonClicked();
+    void onTrainButtonClicked();
+    void onGenerateDataSetClicked();  // Slot for handling the button click
+    void onQuitButtonClicked();
+
 private:
     Ui::MainWindow *ui;
 };
