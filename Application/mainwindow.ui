@@ -41,13 +41,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="generate">
-       <property name="text">
-        <string>Generate Data Set</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="startButton">
        <property name="text">
         <string>Start</string>
@@ -58,6 +51,13 @@
       <widget class="QPushButton" name="trainButton">
        <property name="text">
         <string>Train</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="generate">
+       <property name="text">
+        <string>Generate Data Set</string>
        </property>
       </widget>
      </item>

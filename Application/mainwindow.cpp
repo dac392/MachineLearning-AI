@@ -5,7 +5,9 @@
 
 #include <iostream>
 #include <QFile>  // Include for QFile
+#include <QDir>  // Include for QDir
 
+#define DATASET_NAME "/diagrams.csv"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -13,8 +15,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Check if "dataset.csv" exists
-    if (!QFile::exists("dataset.csv")) {
+    // Generate the path to "diagrams.csv"
+    QString datasetPath = QCoreApplication::applicationDirPath() + DATASET_NAME;
+    // Convert QString to std::string for printing
+    std::string datasetPathStd = datasetPath.toStdString();
+    std::cout << datasetPathStd << std::endl;
+
+    // Check if "diagram.csv" exists
+    if (!QFile::exists(datasetPath)) {
         ui->startButton->hide();  // Hide the Start button
         ui->trainButton->hide();  // Hide the Train button
     }
