@@ -2,7 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <vector>
+#include <algorithm>
+#include <random>
 
 #define LEARNING_RATE 0.001
 #define ITERATIONS 30000
@@ -34,15 +35,16 @@ void MachineLearning::loadDataset() {
     // Convert vectors to Eigen matrix and vector
     int num_samples = temp_data.size();
     int num_features = temp_data.front().size();
-    X_train.resize(num_samples, num_features);
-    y_train.resize(num_samples);
+    Eigen::MatrixXd data(num_samples, num_features);
+    Eigen::VectorXd labels(num_samples);
 
     for (int i = 0; i < num_samples; ++i) {
-        X_train.row(i) = temp_data[i];
-        y_train(i) = temp_labels[i];
+        data.row(i) = temp_data[i];
+        labels(i) = temp_labels[i];
     }
 
-    addIntercept(X_train);
+    // Split the dataset
+    splitDataset(data, labels);
 }
 
 void MachineLearning::addIntercept(Eigen::MatrixXd& X) {
@@ -60,6 +62,31 @@ void MachineLearning::train() {
 
     // train
     model.fit(X_train, y_train);
+
+}
+
+void MachineLearning::test(){
+    auto predictions = model.predict(X_test);
+    double accuracy = evaluateAccuracy(predictions, y_test);
+    std::cout << "Accuracy: " << accuracy << std::endl;
+}
+
+
+
+double MachineLearning::evaluateAccuracy(const Eigen::VectorXd& predictions, const Eigen::VectorXd& actual) const {
+    if (predictions.size() != actual.size()) {
+        std::cerr << "Error: Size of predictions and actual labels must be the same." << std::endl;
+        return 0.0;
+    }
+
+    int correct = 0;
+    for (int i = 0; i < predictions.size(); ++i) {
+        if (predictions(i) == actual(i)) {
+            correct++;
+        }
+    }
+
+    return static_cast<double>(correct) / predictions.size();
 }
 
 
@@ -113,5 +140,34 @@ std::pair<Eigen::VectorXd, int> MachineLearning::processRow(const std::vector<st
 
     // Return a pair of feature vector and label
     return std::make_pair(feature_vector, label);
+}
+
+void MachineLearning::splitDataset(Eigen::MatrixXd& data, Eigen::VectorXd& labels) {
+    int num_samples = data.rows();
+    int train_size = static_cast<int>(num_samples * 0.8);
+    int test_size = num_samples - train_size;
+
+    // Shuffle the dataset
+    std::vector<int> indices(num_samples);
+    std::iota(indices.begin(), indices.end(), 0);
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(indices.begin(), indices.end(), g);
+
+    // Split the dataset
+    X_train.resize(train_size, data.cols());
+    y_train.resize(train_size);
+    X_test.resize(test_size, data.cols());
+    y_test.resize(test_size);
+
+    for (int i = 0; i < train_size; ++i) {
+        X_train.row(i) = data.row(indices[i]);
+        y_train(i) = labels(indices[i]);
+    }
+
+    for (int i = 0; i < test_size; ++i) {
+        X_test.row(i) = data.row(indices[train_size + i]);
+        y_test(i) = labels(indices[train_size + i]);
+    }
 }
 
