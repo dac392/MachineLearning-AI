@@ -154,9 +154,10 @@ void StartWidget::onSubmitButtonClicked() {
         csvString += diagram.back();
     }
 
-    // send this string to ml to decode into a flattened array
-    // predict the flattened array
-    // make a dialougue  with the prediction results
+    int prediction = ml->predict(csvString);
+    // Interpret the prediction result and display it in a dialogue
+    QString resultMessage = (prediction == 1) ? "Dangerous" : "Safe";
+    QMessageBox::information(this, "Prediction Result", "The input is predicted to be: " + resultMessage);
 }
 
 

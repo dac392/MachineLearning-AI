@@ -13,7 +13,7 @@ public:
     void loadDataset();
     void train(QProgressDialog& progressDialog);
     void test();
-    int predict(Eigen::MatrixXd& diagram);
+    int predict(const std::string& diagram);
 
 
 private:

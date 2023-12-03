@@ -18,6 +18,7 @@ public:
     void fit(const Eigen::MatrixXd& X, const Eigen::VectorXd& y, QProgressDialog& progressDialog);
     Eigen::VectorXd predict(const Eigen::MatrixXd& X) const;
     Eigen::VectorXd getWeights() const { return weights; }
+    int singlePrediction(const Eigen::VectorXd& extendedFeatures);
 
 private:
     double learningRate;

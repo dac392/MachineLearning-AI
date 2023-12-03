@@ -41,6 +41,14 @@ double LogisticRegression::sigmoid(double z) {
     return 1.0 / (1.0 + exp(-z));
 }
 
+int LogisticRegression::singlePrediction(const Eigen::VectorXd& extendedFeatures) {
+    // Assuming that 'weights' is the trained model parameters
+    double linearCombination = extendedFeatures.dot(weights);
+    double probability = 1.0 / (1.0 + exp(-linearCombination));
+
+    return (probability > 0.5) ? 1 : 0;  // Return 1 for 'Dangerous', 0 for 'Safe'
+}
+
 double LogisticRegression::computeCost(const Eigen::MatrixXd& X, const Eigen::VectorXd& y) const {
     Eigen::VectorXd predictions = (X * weights).unaryExpr(&LogisticRegression::sigmoid);
     double cost = -(y.array() * predictions.array().log() + (1 - y.array()) * (1 - predictions.array()).log()).mean();

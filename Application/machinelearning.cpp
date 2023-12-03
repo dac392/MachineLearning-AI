@@ -7,7 +7,7 @@
 
 
 #define LEARNING_RATE 0.001
-#define ITERATIONS 10000
+#define ITERATIONS 100
 #define REGULARIZATION_MODIFIER 600
 
 MachineLearning::MachineLearning(const std::string& datasetPath)
@@ -64,10 +64,57 @@ void MachineLearning::train(QProgressDialog& progressDialog) {
 
 }
 
-int MachineLearning::predict(Eigen::MatrixXd& diagram){
-    auto prediction = model.predict(diagram);
-    return (prediction(0) > 0.5) ? 1 : 0;
+int MachineLearning::predict(const std::string& diagram) {
+    // Parse the input string to extract color and position information
+    std::istringstream ss(diagram);
+    std::string token;
+    Eigen::VectorXd color_order(4); // Assuming there are 4 color wires
+    std::array<std::array<double, 20>, 20> matrix = {};
+
+    int colorOrderIndex = 0;
+    while (std::getline(ss, token, ',')) {
+        std::istringstream tokenStream(token);
+        std::string rowOrCol, color;
+        int index;
+        tokenStream >> rowOrCol >> index >> color;
+
+        // Convert color to a numerical value
+        double colorValue = encodeColor(color);
+        color_order[colorOrderIndex++] = colorValue;
+
+        // Calculate position in the flattened matrix
+        int position = (rowOrCol == "Row") ? index : index;
+        if (rowOrCol == "Row") {
+            std::fill(matrix[position].begin(), matrix[position].end(), colorValue);
+        } else {
+            for (auto& row : matrix) {
+                row[position] = colorValue;
+            }
+        }
+    }
+
+    // Flatten the matrix and append color order
+    Eigen::VectorXd feature_vector(400 + color_order.size()); // 400 for flattened matrix + size of color_order
+    int index = 0;
+
+    for (const auto& row : matrix) {
+        for (double value : row) {
+            feature_vector(index++) = value;
+        }
+    }
+    feature_vector.segment(400, color_order.size()) = color_order;
+
+    // Add an intercept term
+    Eigen::VectorXd extendedFeatures(1 + feature_vector.size());
+    extendedFeatures << 1, feature_vector;
+
+    // Make a prediction
+    int prediction = model.singlePrediction(extendedFeatures);
+
+    // Assuming a binary classification and threshold of 0.5
+    return prediction;
 }
+
 
 void MachineLearning::test(){
     auto predictions = model.predict(X_test);
