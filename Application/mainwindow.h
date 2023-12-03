@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "machinelearning.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,5 +24,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    MachineLearning ml;
 };
 #endif // MAINWINDOW_H

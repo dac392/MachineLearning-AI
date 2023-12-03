@@ -5,8 +5,9 @@
 #include <algorithm>
 #include <random>
 
+
 #define LEARNING_RATE 0.001
-#define ITERATIONS 30000
+#define ITERATIONS 10000
 #define REGULARIZATION_MODIFIER 600
 
 MachineLearning::MachineLearning(const std::string& datasetPath)
@@ -53,16 +54,19 @@ void MachineLearning::addIntercept(Eigen::MatrixXd& X) {
     X = newX;
 }
 
-void MachineLearning::train() {
-    // load the data
-    loadDataset();
-
+void MachineLearning::train(QProgressDialog& progressDialog) {
     // add intercepts
     addIntercept(X_train);
+    addIntercept(X_test);
 
     // train
-    model.fit(X_train, y_train);
+    model.fit(X_train, y_train, progressDialog);
 
+}
+
+int MachineLearning::predict(Eigen::MatrixXd& diagram){
+    auto prediction = model.predict(diagram);
+    return (prediction(0) > 0.5) ? 1 : 0;
 }
 
 void MachineLearning::test(){

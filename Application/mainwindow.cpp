@@ -12,19 +12,20 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , ml((QCoreApplication::applicationDirPath()+DATASET_NAME).toStdString())
 {
     ui->setupUi(this);
 
     // Generate the path to "diagrams.csv"
     QString datasetPath = QCoreApplication::applicationDirPath() + DATASET_NAME;
-    // Convert QString to std::string for printing
-    std::string datasetPathStd = datasetPath.toStdString();
-    std::cout << datasetPathStd << std::endl;
 
     // Check if "diagram.csv" exists
     if (!QFile::exists(datasetPath)) {
         ui->startButton->hide();  // Hide the Start button
         ui->trainButton->hide();  // Hide the Train button
+    }else{
+        ml.loadDataset();
+        std::cout << "loaded dataset" << std::endl;
     }
     connect(ui->startButton, &QPushButton::clicked, this, &MainWindow::onStartButtonClicked);
     connect(ui->trainButton, &QPushButton::clicked, this, &MainWindow::onTrainButtonClicked);
@@ -40,19 +41,30 @@ MainWindow::~MainWindow()
 
 void MainWindow::onStartButtonClicked()
 {
-    StartWidget *newScreen = new StartWidget(this);
+    StartWidget *newScreen = new StartWidget(this, &ml);
     setCentralWidget(newScreen);
 }
 
-void MainWindow::onTrainButtonClicked()
-{
-    std::cout << "Train Button Clicked" << std::endl;
+void MainWindow::onTrainButtonClicked() {
+    QProgressDialog progressDialog("Training in progress...", "Cancel", 0, 100, this);
+    progressDialog.setWindowModality(Qt::WindowModal);
+    progressDialog.show();
+
+    // Call the updated training method with the progress dialog
+    ml.train(progressDialog);
+
+    // Test the model
+    ml.test();
+
+    // Hide button from view
+    ui->trainButton->hide();  // Hide the Train button
 }
+
 
 // Slot implementation for generating data set
 void MainWindow::onGenerateDataSetClicked() {
-    int number_of_diagrams = 3000;
-    std::cout << "BTW, you are only generating " << number_of_diagrams << " at a time" << std::endl;
+    int number_of_diagrams = 10000;
+
     DataGenerator generator;
     // Example: Generate and save 10 diagrams
     for (int i = 0; i < number_of_diagrams; ++i) {
@@ -63,6 +75,9 @@ void MainWindow::onGenerateDataSetClicked() {
     // Unhide the Start and Train buttons
     ui->startButton->show();
     ui->trainButton->show();
+    ml.loadDataset();
+    std::cout << "loaded dataset" << std::endl;
+    std::cout << "BTW, you are only generating " << number_of_diagrams << " at a time" << std::endl;
 }
 
 void MainWindow::onQuitButtonClicked()

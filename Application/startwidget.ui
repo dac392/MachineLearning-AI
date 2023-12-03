@@ -155,7 +155,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_401">
+       <widget class="QPushButton" name="submitButton">
         <property name="maximumSize">
          <size>
           <width>200</width>

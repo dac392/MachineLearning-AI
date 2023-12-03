@@ -84,7 +84,7 @@ void DataGenerator::saveToCSV(const std::string& filename) {
         for (const auto& wire : wireSequence) {
             file << wire.orientation << " " << wire.position << " " << wire.color;
             if (&wire != &wireSequence.back()) {
-                file << ", ";  // Add comma separator except after the last item
+                file << ",";  // Add comma separator except after the last item
             }
         }
         file << ", " << status << "\n";  // Add status and end the line

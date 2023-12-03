@@ -1,19 +1,36 @@
 #include "logisticregression.h"
 #include <cmath>
-#include <Eigen/Dense>
+#include <QProgressDialog>
+#include <QApplication>
+
 
 LogisticRegression::LogisticRegression(double lr, int iter, double regStrength, RegularizationType regType)
     : learningRate(lr), iterations(iter), regularizationStrength(regStrength), regType(regType) {}
 
-void LogisticRegression::fit(const Eigen::MatrixXd& X, const Eigen::VectorXd& y) {
+void LogisticRegression::fit(const Eigen::MatrixXd& X, const Eigen::VectorXd& y, QProgressDialog& progressDialog) {
     size_t n_features = X.cols();
     weights = Eigen::VectorXd::Random(n_features); // Small random initialization
+
+    progressDialog.setRange(0, iterations);
+    progressDialog.setValue(0);
 
     for (int i = 0; i < iterations; ++i) {
         Eigen::VectorXd gradients = computeGradient(X, y);
         weights -= learningRate * gradients;
+
+        // Update the progress dialog
+        progressDialog.setValue(i);
+        QApplication::processEvents();
+
+        // Check if the operation was canceled
+        if (progressDialog.wasCanceled()) {
+            break;
+        }
     }
+
+    progressDialog.setValue(iterations); // Indicate completion
 }
+
 
 Eigen::VectorXd LogisticRegression::predict(const Eigen::MatrixXd& X) const {
     Eigen::VectorXd predictions = (X * weights).unaryExpr(&LogisticRegression::sigmoid);

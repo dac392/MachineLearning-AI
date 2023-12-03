@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 #include <string>
+#include <QProgressDialog>
 
 #include "logisticregression.h"
 
@@ -10,8 +11,9 @@ class MachineLearning {
 public:
     MachineLearning(const std::string& datasetPath);
     void loadDataset();
-    void train();
+    void train(QProgressDialog& progressDialog);
     void test();
+    int predict(Eigen::MatrixXd& diagram);
 
 
 private:
