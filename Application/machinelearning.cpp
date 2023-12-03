@@ -7,7 +7,7 @@
 
 
 #define LEARNING_RATE 0.001
-#define ITERATIONS 100
+#define ITERATIONS 10000
 #define REGULARIZATION_MODIFIER 600
 
 MachineLearning::MachineLearning(const std::string& datasetPath)

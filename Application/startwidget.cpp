@@ -97,7 +97,8 @@ void StartWidget::colorButtonClicked(const QString &color) {
     for (QPushButton* btn : currentlySelectedButtons) {
         btn->setStyleSheet(styleSheet);
         colorHasBeenSet[btn] = true; // Mark this button as having its color permanently set
-        btn->disconnect(); // Prevent further changes
+        //btn->disconnect(); // Prevent further changes
+        btn->setEnabled(false);
         highlightedButtons.push_back(btn); // Add to permanently colored list
     }
 
@@ -158,7 +159,40 @@ void StartWidget::onSubmitButtonClicked() {
     // Interpret the prediction result and display it in a dialogue
     QString resultMessage = (prediction == 1) ? "Dangerous" : "Safe";
     QMessageBox::information(this, "Prediction Result", "The input is predicted to be: " + resultMessage);
+    resetViewToDefault();
 }
+
+void StartWidget::resetViewToDefault() {
+    // Reset the 20x20 grid buttons
+    for (int i = 0; i < 20; ++i) {
+        for (int j = 0; j < 20; ++j) {
+            QPushButton* button = buttons[i][j];
+            button->setEnabled(true);
+            button->setStyleSheet("");  // Reset to default style
+            colorHasBeenSet[button] = false;  // Reset colorHasBeenSet for each button
+
+        }
+    }
+
+    // Reset the red, blue, green, and yellow buttons to their default states
+    ui->redButton->setEnabled(true);
+    ui->redButton->setStyleSheet("background-color: red");
+
+    ui->blueButton->setEnabled(true);
+    ui->blueButton->setStyleSheet("background-color: blue");
+
+    ui->greenButton->setEnabled(true);
+    ui->greenButton->setStyleSheet("background-color: green");
+
+    ui->yellowButton->setEnabled(true);
+    ui->yellowButton->setStyleSheet("background-color: yellow");
+
+    // Clear the diagram vector and currently selected buttons
+    diagram.clear();
+    currentlySelectedButtons.clear();
+}
+
+
 
 
 QString StartWidget::getButtonColor(QPushButton* button) {

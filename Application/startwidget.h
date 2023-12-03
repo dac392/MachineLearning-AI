@@ -48,6 +48,7 @@ private:
     bool areAllColorButtonsDisabled() const;
     QString getButtonColor(QPushButton* button);
     std::string stateDecoding();
+    void resetViewToDefault();
 };
 
 #endif // STARTWIDGET_H
