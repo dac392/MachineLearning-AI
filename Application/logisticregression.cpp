@@ -5,7 +5,9 @@
 
 
 LogisticRegression::LogisticRegression(double lr, int iter, double regStrength, RegularizationType regType)
-    : learningRate(lr), iterations(iter), regularizationStrength(regStrength), regType(regType) {}
+    : learningRate(lr), iterations(iter), regularizationStrength(regStrength), regType(regType) {
+    threshold = 0.5;
+}
 
 void LogisticRegression::fit(const Eigen::MatrixXd& X, const Eigen::VectorXd& y, QProgressDialog& progressDialog) {
     size_t n_features = X.cols();
@@ -34,7 +36,7 @@ void LogisticRegression::fit(const Eigen::MatrixXd& X, const Eigen::VectorXd& y,
 
 Eigen::VectorXd LogisticRegression::predict(const Eigen::MatrixXd& X) const {
     Eigen::VectorXd predictions = (X * weights).unaryExpr(&LogisticRegression::sigmoid);
-    return (predictions.array() > 0.5).cast<double>();
+    return (predictions.array() > threshold).cast<double>();
 }
 
 double LogisticRegression::sigmoid(double z) {
@@ -46,7 +48,7 @@ int LogisticRegression::singlePrediction(const Eigen::VectorXd& extendedFeatures
     double linearCombination = extendedFeatures.dot(weights);
     double probability = 1.0 / (1.0 + exp(-linearCombination));
 
-    return (probability > 0.5) ? 1 : 0;  // Return 1 for 'Dangerous', 0 for 'Safe'
+    return (probability > threshold) ? 1 : 0;  // Return 1 for 'Dangerous', 0 for 'Safe'
 }
 
 double LogisticRegression::computeCost(const Eigen::MatrixXd& X, const Eigen::VectorXd& y) const {
@@ -80,4 +82,16 @@ Eigen::VectorXd LogisticRegression::computeGradient(const Eigen::MatrixXd& X, co
 
     return gradients;
 }
+
+void LogisticRegression::setLearningRate(double lr){
+    learningRate = lr;
+}
+void LogisticRegression::setRegularizationStrength(double reg){
+    regularizationStrength = reg;
+}
+
+void LogisticRegression::setThreshold(double thresh){
+    threshold = thresh;
+}
+
 

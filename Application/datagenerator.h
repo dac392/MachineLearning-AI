@@ -28,6 +28,8 @@ private:
     std::mt19937 gen;
     std::vector<WireInfo> wireSequence;
     std::string status;
+    std::set<int> usedRows;
+    std::set<int> usedColumns;
 
     int randomInRange(int start, int end);
     Color getRandomColor(std::set<Color>& excludedColors);

@@ -29,6 +29,8 @@ std::string DataGenerator::colorToString(Color color) {
 
 std::string DataGenerator::generateDiagram() {
     wireSequence.clear();
+    usedRows.clear();
+    usedColumns.clear();
     Color diagram[20][20] = {}; // 2D array to represent the diagram
 
     bool startWithRow = randomInRange(0, 1); // 0 for row, 1 for column
@@ -59,7 +61,10 @@ std::string DataGenerator::generateDiagram() {
 
 
 void DataGenerator::colorRowOrColumn(bool isRow, Color& selectedColor, int& selectedPosition, std::set<Color>& usedColors, Color diagram[20][20]) {
-    selectedPosition = randomInRange(1, 20) - 1;
+    do {
+        selectedPosition = randomInRange(1, 20) - 1;
+    } while (isRow ? usedRows.count(selectedPosition) > 0 : usedColumns.count(selectedPosition) > 0);
+
     selectedColor = getRandomColor(usedColors);
     usedColors.insert(selectedColor);
 
@@ -69,12 +74,14 @@ void DataGenerator::colorRowOrColumn(bool isRow, Color& selectedColor, int& sele
             diagram[selectedPosition][i] = selectedColor;
         }
         wireSequence.push_back({"Row", selectedPosition + 1, colorToString(selectedColor)});
+        usedRows.insert(selectedPosition);
     } else {
         // Color the column
         for (int i = 0; i < 20; ++i) {
             diagram[i][selectedPosition] = selectedColor;
         }
         wireSequence.push_back({"Column", selectedPosition + 1, colorToString(selectedColor)});
+        usedColumns.insert(selectedPosition);
     }
 }
 
@@ -87,7 +94,7 @@ void DataGenerator::saveToCSV(const std::string& filename) {
                 file << ",";  // Add comma separator except after the last item
             }
         }
-        file << ", " << status << "\n";  // Add status and end the line
+        file << "," << status << "\n";  // Add status and end the line
     }
 }
 

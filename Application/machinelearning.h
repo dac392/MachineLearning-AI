@@ -12,7 +12,7 @@ public:
     MachineLearning(const std::string& datasetPath);
     void loadDataset();
     void train(QProgressDialog& progressDialog);
-    void test();
+    double test(double lr, double reg, double thresh);
     int predict(const std::string& diagram);
 
 
@@ -29,6 +29,7 @@ private:
     void addIntercept(Eigen::MatrixXd& X);
     void splitDataset(Eigen::MatrixXd& data, Eigen::VectorXd& labels);
     double evaluateAccuracy(const Eigen::VectorXd& predictions, const Eigen::VectorXd& actual) const;
+    void playNotificationSound();
 
 };
 

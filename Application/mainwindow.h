@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSoundEffect>
 #include "machinelearning.h"
 
 QT_BEGIN_NAMESPACE
@@ -24,6 +25,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QSoundEffect *sound;
     MachineLearning ml;
 };
 #endif // MAINWINDOW_H

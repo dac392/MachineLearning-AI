@@ -20,10 +20,15 @@ public:
     Eigen::VectorXd getWeights() const { return weights; }
     int singlePrediction(const Eigen::VectorXd& extendedFeatures);
 
+    void setLearningRate(double lr);
+    void setRegularizationStrength(double reg);
+    void setThreshold(double thresh);
+
 private:
     double learningRate;
     int iterations;
     double regularizationStrength;
+    double threshold;
     RegularizationType regType;
     Eigen::VectorXd weights;
 

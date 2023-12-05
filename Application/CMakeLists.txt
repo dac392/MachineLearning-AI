@@ -11,8 +11,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(EIGEN_DIR "C:/Libraries") #set(EIGEN_DIR "" CACHE PATH "Path to the Eigen library")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Multimedia)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia)
+
 
 set(PROJECT_SOURCES
         main.cpp
@@ -29,6 +30,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         startwidget.h startwidget.cpp startwidget.ui
         machinelearning.h machinelearning.cpp
         logisticregression.h logisticregression.cpp
+        resource.qrc
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Application APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -48,7 +51,9 @@ else()
     endif()
 endif()
 
-target_link_libraries(Application PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+# Link both Widgets and Multimedia modules
+target_link_libraries(Application PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Multimedia)
+
 
 if(EIGEN_DIR)
     include_directories(${EIGEN_DIR})
